@@ -27,10 +27,10 @@ Test Output: "CTGTTCAC"
 ```
 
 ```
-def softclip_corrector(cigar: str, position: int) -> int:
-"""Takes an input CIGAR string and position and corrects for soft-clipping. Returns the position corrected for soft clipping"""
+def softclip_corrector(strand: int, cigar: str, position: int) -> int:
+"""Takes an input strand (+ = 1, - = 0), CIGAR string and position and corrects for soft-clipping. Returns the position corrected for soft clipping"""
     return: an int object of the position taking into account the CIGAR string
-Test Input: "1S70M", 101
+Test Input: 1, "1S70M", 101
 Test Output: 100
 ```
 
