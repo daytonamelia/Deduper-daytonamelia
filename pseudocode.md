@@ -1,13 +1,14 @@
-Goal: Read a single-end sorted sam file and remove all PCR-duplicates, retaining only a single copy of each read. A PCR-duplicate is a read with the same alignment position (same chromosome, 5’ start of read, strand) and same unique molecular index (UMI). A list of valid UMIs is provided by the user.
+*Deduper Psuedocode*
 
-Examples: See unit-tests directory for test input and output sam files. See README.md for explanation of tests.
+**Goal:**
 
-High Level Functions:
+Read a single-end sorted sam file and remove all PCR-duplicates, retaining only a single copy of each read. A PCR-duplicate is a read with the same alignment position (same chromosome, 5’ start of read, strand) and same unique molecular index (UMI). A list of valid UMIs is provided by the user.
 
-    Description
-    Function headers
-    Test examples (for individual functions)
-    Return statement
+**Examples:**
+
+See unit-tests directory for test input and output sam files. See README.md for explanation of tests.
+
+**High Level Functions:**
 
 ```
 def valid_umis(file: str, sep: str = "\n") -> set:
@@ -16,6 +17,7 @@ def valid_umis(file: str, sep: str = "\n") -> set:
 Test Input: file with contents: "AAA\tTTT\tCCC\tGGG"
 Test Output: {AAA, TTT, CCC, GGG}
 ```
+
 ```
 def umi_finder(qname: str) -> str:
 """Takes a valid input QNAME string, parses, and returns just the UMI at the end of the read."""
@@ -23,6 +25,7 @@ def umi_finder(qname: str) -> str:
 Test Input: "NS500451:154:HWKTMBGXX:1:11101:24260:1121:CTGTTCAC"
 Test Output: "CTGTTCAC"
 ```
+
 ```
 def softclip_corrector(cigar: str, position: int) -> int:
 """Takes an input CIGAR string and position and corrects for soft-clipping. Returns the position corrected for soft clipping"""
@@ -31,7 +34,8 @@ Test Input: "1S70M", 101
 Test Output: 100
 ```
 
-Algorithm:
+**Algorithm:**
+
 ```
 use valid_umis function to save our set of valid UMIs
 
