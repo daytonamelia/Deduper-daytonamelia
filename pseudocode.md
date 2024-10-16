@@ -1,14 +1,14 @@
-*Deduper Psuedocode*
+# Deduper Psuedocode
 
-**Goal:**
+## Goal:
 
 Read a single-end sorted sam file and remove all PCR-duplicates, retaining only a single copy of each read. A PCR-duplicate is a read with the same alignment position (same chromosome, 5’ start of read, strand) and same unique molecular index (UMI). A list of valid UMIs is provided by the user.
 
-**Examples:**
+## Examples:
 
-See unit-tests directory for test input and output sam files. See README.md for explanation of tests.
+See unit-tests directory for test input and output sam files. See README.md for explanation of reads within the test.
 
-**High Level Functions:**
+## High Level Functions:
 
 ```
 def valid_umis(file: str, sep: str = "\n") -> set:
@@ -34,7 +34,7 @@ Test Input: "1S70M", 101
 Test Output: 100
 ```
 
-**Algorithm:**
+## Algorithm:
 
 ```
 use valid_umis function to save our set of valid UMIs
@@ -62,7 +62,7 @@ open input sam file and output files:
         we do this by checking if the position is in the corresponding UMI-strand set. this also saves some searching time.
             if it is in that set, this read is a PCR-duplicate! 
             if it is not in that set, then we save the position to the corresponding UMI-strand set and we write this read (with original start position) to our output file.
-        clear working read to save memory and loop back to our next line!
+        change our working read to be the "previous working read" to save memory and loop back to our next line!
 
-Once this loop is done, we should have looped through the file only once and saved all of the non-duped reads to a file.
+Once this loop is done, we should have looped through the file only once and saved all of the non-duped reads to a file to be returned.
 ```
