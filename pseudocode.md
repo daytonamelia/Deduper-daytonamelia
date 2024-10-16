@@ -62,7 +62,7 @@ open input sam file and output files:
         we do this by checking if the position is in the corresponding UMI-strand set. this also saves some searching time.
             if it is in that set, this read is a PCR-duplicate! 
             if it is not in that set, then we save the position to the corresponding UMI-strand set and we write this read (with original start position) to our output file.
-        change our working read to be the "previous working read" to save memory and loop back to our next line!
+        save the old chromosome number just in case the next read is on a new chromosome
 
 Once this loop is done, we should have looped through the file only once and saved all of the non-duped reads to a file to be returned.
 ```
