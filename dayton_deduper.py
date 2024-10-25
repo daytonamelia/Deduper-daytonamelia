@@ -82,10 +82,9 @@ with open(args.file, "r") as rf, open(args.outfile, "w") as wf:
             wf.write("\n")
         else: # line is a read - check validity
             working_read = workingreader(line)
-            print("------")
-            print(line)
-            print(working_read)
-
+            # print("------")
+            # print(line)
+            # print(working_read)
             if working_read["chromosome"] != current_chromosome: # we are in a new chromosome!
                 working_chromosome = {}
                 for umi in umis: # make a dictionary of empty sets for each umi and strand combo
@@ -94,23 +93,18 @@ with open(args.file, "r") as rf, open(args.outfile, "w") as wf:
                 current_chromosome = working_read["chromosome"]
             umi = umi_finder(working_read["qname"])
             if umi not in umis: # check if umi is valid before we do any more work on this read
-                print("YUCK")
                 continue
             if working_read["bitflag"] & 16 == 0:
                 strand = "+" # strand is negative
             else:
                 strand = "-" # strand is positive
             fiveprimeposition = softclip_corrector(strand, working_read["cigar"], working_read["position"])
-            print(f"\nChromosome: {working_read['chromosome']}")
-            print(f"UMI: {umi}")
-            print(f"Strand: {strand}")
-            print(f"Five Prime: {fiveprimeposition}")
-
+            # print(f"\nChromosome: {working_read['chromosome']}")
+            # print(f"UMI: {umi}")
+            # print(f"Strand: {strand}")
+            # print(f"Five Prime: {fiveprimeposition}")
             umiset = f"{umi}{strand}"
-            print(working_chromosome[umiset])
             if fiveprimeposition not in working_chromosome[umiset]:
                 wf.write(f"{line}\n")
                 working_chromosome[umiset].append(fiveprimeposition)
-
-
             
