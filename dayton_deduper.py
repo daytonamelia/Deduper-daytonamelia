@@ -56,22 +56,26 @@ def softclip_corrector(strand: str, cigar: str, position: int) -> int:
         ns = 0
         ss = 0
         for i, ele in enumerate(splitcigar):
+            cigsplit = re.split(r"[a-zA-Z]", ele)
             if "M" in ele:
-                cigsplit = re.split(r"[a-zA-Z]", ele)
-                ms = int(cigsplit[0])
+                ms += int(cigsplit[0])
             if "D" in ele:
-                cigsplit = re.split(r"[a-zA-Z]", ele)
-                ds = int(cigsplit[0])
+                ds += int(cigsplit[0])
             if "N" in ele:
-                cigsplit = re.split(r"[a-zA-Z]", ele)
-                ns = int(cigsplit[0])
+                ns += int(cigsplit[0])
             if "S" in ele and i == last_element:
-                cigsplit = re.split(r"[a-zA-Z]", ele)
-                ss = int(cigsplit[0])
+                ss += int(cigsplit[0])
+            # print('~~~~~')
+            # print(ele)
+            # print(cigsplit)
+            # print(ms, ds, ns, ss, position)
         return (ms + ds + ss + ns + position - 1)
 
 args = get_args()
 umis = valid_umis(args.umi)
+uniquelines = 0
+invalidumis = 0
+duplicatesremoved = 0
 current_chromosome = "0" # initialize chromosome for checking chromosome change, needs to be string in case of X and Y
 
 with open(args.file, "r") as rf, open(args.outfile, "w") as wf:
@@ -82,7 +86,7 @@ with open(args.file, "r") as rf, open(args.outfile, "w") as wf:
             wf.write("\n")
         else: # line is a read - check validity
             working_read = workingreader(line)
-            # print("------")
+            # print("--------------------")
             # print(line)
             # print(working_read)
             if working_read["chromosome"] != current_chromosome: # we are in a new chromosome!
@@ -93,6 +97,8 @@ with open(args.file, "r") as rf, open(args.outfile, "w") as wf:
                 current_chromosome = working_read["chromosome"]
             umi = umi_finder(working_read["qname"])
             if umi not in umis: # check if umi is valid before we do any more work on this read
+                # print("INVALID")
+                invalidumis += 1
                 continue
             if working_read["bitflag"] & 16 == 0:
                 strand = "+" # strand is negative
@@ -105,6 +111,14 @@ with open(args.file, "r") as rf, open(args.outfile, "w") as wf:
             # print(f"Five Prime: {fiveprimeposition}")
             umiset = f"{umi}{strand}"
             if fiveprimeposition not in working_chromosome[umiset]:
+                # print("RETAIN")
+                uniquelines += 1
                 wf.write(f"{line}\n")
                 working_chromosome[umiset].append(fiveprimeposition)
-            
+            else:
+                # print("TOSS")
+                duplicatesremoved += 1
+
+print(f"Unique lines: {uniquelines}")
+print(f"Unknown UMIS: {invalidumis}")
+print(f"Duplicates removed: {duplicatesremoved}")
